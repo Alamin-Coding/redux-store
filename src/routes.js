@@ -3,6 +3,7 @@ import Root from "./Root";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Cart from "./pages/Cart";
+import Wishlist from "./pages/Wishlist";
 
 
 export const router = createBrowserRouter([
@@ -13,6 +14,7 @@ export const router = createBrowserRouter([
       { index: true, Component: Home },
       { path: "about", Component: About },
       { path: "cart", Component: Cart },
+      { path: "wishlist", Component: Wishlist },
     //   {
     //     path: "auth",
     //     Component: AuthLayout,
