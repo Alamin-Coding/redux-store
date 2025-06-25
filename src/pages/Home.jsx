@@ -1,20 +1,28 @@
 import { useSelector } from "react-redux";
 import ProductCard from "../components/ProductCard";
-import { products } from "../data";
 import { Heart, Star, Plus, Minus, ArrowLeft } from "lucide-react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { getProducts } from "../features/product/productSlice";
-
-
+import Pagination from "../components/Pagination";
+import { useState } from "react";
 
 const Home = () => {
-  const {products:allProducts, status} = useSelector((state) => state.products);
-  console.log("Product :", allProducts);
+  const { products: allProducts, status } = useSelector(
+    (state) => state.products
+  );
+
   const dispatch = useDispatch();
 
+  const categories = [...new Set(allProducts.map((c) => c.category))];
 
+  const totalItems = allProducts.length;
+  const itemsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(1);
 
+  const handlePageChange = (e) => {
+    setCurrentPage(e);
+  };
 
   useEffect(() => {
     dispatch(getProducts());
@@ -69,10 +77,16 @@ const Home = () => {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {allProducts?.map((product) => (
+            {allProducts?.slice((currentPage*6)-itemsPerPage, currentPage*6).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
+          <Pagination
+            currentPage={currentPage}
+            totalItems={totalItems}
+            itemsPerPage={itemsPerPage}
+            onPageChange={handlePageChange}
+          />
         </section>
 
         {/* Categories */}
@@ -87,22 +101,20 @@ const Home = () => {
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {["Beauty", "Fragrances", "Fashion", "Electronics"].map(
-                (category) => (
-                  <div key={category} className="group cursor-pointer">
-                    <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-8 text-center hover:from-purple-200 hover:to-pink-200 transition-all duration-300 transform hover:-translate-y-2">
-                      <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                        <span className="text-white font-bold text-xl">
-                          {category[0]}
-                        </span>
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {category}
-                      </h3>
+              {categories.map((category) => (
+                <div key={category} className="group cursor-pointer">
+                  <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-8 text-center hover:from-purple-200 hover:to-pink-200 transition-all duration-300 transform hover:-translate-y-2">
+                    <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span className="text-white font-bold text-xl">
+                        {category[0]}
+                      </span>
                     </div>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {category}
+                    </h3>
                   </div>
-                )
-              )}
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -205,7 +217,6 @@ const Home = () => {
        */}
 
       {/* WISHLIST PAGE - Hidden by default */}
-
 
       {/* PRODUCT DETAILS PAGE - Hidden by default */}
       {/* 
