@@ -4,6 +4,7 @@ import { addToWishlist, removeWishlist } from "../features/wishlist/wishlistSlic
 import { Delete } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import { addToCart } from "../features/cart/cartSlice";
+import { Link } from "react-router";
 
 // Product Card Component
 const ProductCard = ({ product, wishlistCard = false }) => {
@@ -65,7 +66,7 @@ const ProductCard = ({ product, wishlistCard = false }) => {
           </span>
         </div>
         <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2">
-          {product.title}
+          <Link to={`/details/${product.id}`}>{product.title}</Link>
         </h3>
         <p className="text-sm text-gray-600 mb-4 line-clamp-2">
           {product.description}

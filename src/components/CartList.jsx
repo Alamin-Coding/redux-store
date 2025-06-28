@@ -3,8 +3,10 @@ import { Plus } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import { Heart } from "lucide-react";
 import { removeFromCart, updateQuantity } from "../features/cart/cartSlice.js";
+import { useDispatch } from "react-redux";
 
 const CartList = ({product}) => {
+  const dispatch = useDispatch()
   return (
     <div
       className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
@@ -26,7 +28,7 @@ const CartList = ({product}) => {
               {product.title}
             </h3>
             <button
-              onClick={() => removeFromCart(product.id)}
+              onClick={() => dispatch(removeFromCart(product.id))}
               className="text-gray-400 hover:text-red-500 transition-colors p-1"
             >
               <Trash2 className="w-5 h-5" />
