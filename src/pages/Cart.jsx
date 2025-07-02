@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Heart, Tag } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import CartList from '../components/CartList';
+import { useNavigate } from 'react-router';
 
 const Cart = () => {
   // const [cartItems, setCartItems] = useState([
@@ -37,7 +38,9 @@ const {cartItems} = useSelector((state) => state.carts);
 const newCart = cartItems.map(cart => {
   return {...cart, quantity:1}
 })
-  console.log(newCart);
+  
+const navigate = useNavigate()
+const continueShopping = ()=> navigate("/shop") 
   
 
   // const [promoCode, setPromoCode] = useState('');
@@ -82,7 +85,7 @@ const newCart = cartItems.map(cart => {
             <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-6" />
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
             <p className="text-gray-600 mb-8">Looks like you haven't added anything to your cart yet.</p>
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+            <button onClick={continueShopping} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
               Continue Shopping
             </button>
           </div>
