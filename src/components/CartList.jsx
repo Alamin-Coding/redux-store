@@ -2,11 +2,15 @@ import { Minus } from "lucide-react";
 import { Plus } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import { Heart } from "lucide-react";
-import { removeFromCart, updateQuantity } from "../features/cart/cartSlice.js";
+import { removeFromCart, updateQuantity, saveForLater } from "../features/cart/cartSlice.js";
 import { useDispatch } from "react-redux";
 
 const CartList = ({product}) => {
   const dispatch = useDispatch()
+
+  const handleSaveForLater = () => {
+    dispatch(saveForLater(product.id));
+  };
   return (
     <div
       className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
@@ -39,18 +43,19 @@ const CartList = ({product}) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center border border-gray-300 rounded-lg">
               <button
-                onClick={() => updateQuantity(product.id, product.quantity - 1)}
+                onClick={() => dispatch(updateQuantity({ id: product.id, quantity: product.quantity - 1 }))}
                 className="p-2 hover:bg-gray-100 rounded-l-lg transition-colors"
               >
                 <Minus className="w-4 h-4" />
               </button>
               <span className="px-4 py-2 font-medium">{product.quantity}</span>
               <button
-                // onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                onClick={() => dispatch(updateQuantity({ id: product.id, quantity: product.quantity + 1 }))}
                 className="p-2 hover:bg-gray-100 rounded-r-lg transition-colors"
               >
                 <Plus className="w-4 h-4" />
               </button>
+
             </div>
 
             <div className="text-right">
@@ -67,7 +72,10 @@ const CartList = ({product}) => {
 
       {/* Action Buttons */}
       <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
-        <button className="flex items-center text-gray-600 hover:text-red-500 transition-colors text-sm">
+        <button 
+          onClick={handleSaveForLater}
+          className="flex items-center text-gray-600 hover:text-blue-500 transition-colors text-sm"
+        >
           <Heart className="w-4 h-4 mr-1" />
           Save for Later
         </button>

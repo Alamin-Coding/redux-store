@@ -2,7 +2,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  cartItems: JSON.parse(localStorage.getItem("cartList")) || []
+  cartItems: JSON.parse(localStorage.getItem("cartList")) || [],
+  savedItems: JSON.parse(localStorage.getItem("savedList")) || []
 };
 
 const cartSlice = createSlice({
@@ -29,11 +30,50 @@ const cartSlice = createSlice({
         const item = state.cartItems.find((i) => i.id === id);
         if (item) item.quantity = quantity;
       }
+      localStorage.setItem("cartList", JSON.stringify(state.cartItems));
     },
 
     clearCart: (state) => {
       state.cartItems = [];
       state.appliedPromo = null;
+      localStorage.setItem("cartList", JSON.stringify(state.cartItems));
+    },
+
+    saveForLater: (state, action) => {
+      const itemId = action.payload;
+      const item = state.cartItems.find((i) => i.id === itemId);
+      if (item) {
+        // Remove from cart
+        state.cartItems = state.cartItems.filter((i) => i.id !== itemId);
+        // Add to saved items if not already there
+        const existingSavedItem = state.savedItems.find((i) => i.id === itemId);
+        if (!existingSavedItem) {
+          state.savedItems.push(item);
+        }
+        localStorage.setItem("cartList", JSON.stringify(state.cartItems));
+        localStorage.setItem("savedList", JSON.stringify(state.savedItems));
+      }
+    },
+
+    moveToCart: (state, action) => {
+      const itemId = action.payload;
+      const item = state.savedItems.find((i) => i.id === itemId);
+      if (item) {
+        // Remove from saved items
+        state.savedItems = state.savedItems.filter((i) => i.id !== itemId);
+        // Add to cart if not already there
+        const existingCartItem = state.cartItems.find((i) => i.id === itemId);
+        if (!existingCartItem) {
+          state.cartItems.push(item);
+        }
+        localStorage.setItem("cartList", JSON.stringify(state.cartItems));
+        localStorage.setItem("savedList", JSON.stringify(state.savedItems));
+      }
+    },
+
+    removeFromSaved: (state, action) => {
+      state.savedItems = state.savedItems.filter((item) => item.id !== action.payload);
+      localStorage.setItem("savedList", JSON.stringify(state.savedItems));
     },
   },
 });
@@ -43,21 +83,25 @@ export const {
   removeFromCart,
   updateQuantity,
   clearCart,
+  saveForLater,
+  moveToCart,
+  removeFromSaved,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
 
 // Selectors
-export const selectCartItems = (state) => state.cart.cartItems;
-export const selectAppliedPromo = (state) => state.cart.appliedPromo;
+export const selectCartItems = (state) => state.carts.cartItems;
+export const selectSavedItems = (state) => state.carts.savedItems;
+export const selectAppliedPromo = (state) => state.carts.appliedPromo;
 
 // Derived totals
 export const selectSubtotal = (state) =>
-  state.cart.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  state.carts.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
 export const selectDiscount = (state) => {
   const subtotal = selectSubtotal(state);
-  return state.cart.appliedPromo ? subtotal * state.cart.appliedPromo.discount : 0;
+  return state.carts.appliedPromo ? subtotal * state.carts.appliedPromo.discount : 0;
 };
 
 export const selectShipping = (state) => {
